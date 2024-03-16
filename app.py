@@ -28,7 +28,7 @@ def get_response(query,chat_history):
     prompt = ChatPromptTemplate.from_template(template)
     llm = ChatOpenAI()
     chain =  prompt | llm | StrOutputParser()
-    return chain.invoke({
+    return chain.stream({
         "chat_history" : chat_history,
         "user_question" : query
     })
@@ -53,8 +53,7 @@ if user_query is not None and user_query != "":
         st.markdown(user_query)
 
     with st.chat_message('Stylist'):
-        ai_response = get_response(user_query, st.session_state.chat_history)
-        st.markdown(ai_response)    
+        ai_response = st.write_stream(get_response(user_query, st.session_state.chat_history))   
 
     st.session_state.chat_history.append(AIMessage(ai_response))
 
